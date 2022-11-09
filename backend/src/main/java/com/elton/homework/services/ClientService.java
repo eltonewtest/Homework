@@ -1,11 +1,12 @@
 package com.elton.homework.services;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.elton.homework.dto.ClientDTO;
 import com.elton.homework.entities.Client;
 import com.elton.homework.repositories.ClientRepository;
 
@@ -16,12 +17,10 @@ public class ClientService {
 	private ClientRepository cliRepository;
 
 	@Transactional(readOnly = true)
-	public List<Client> findAll() {
-		
-		return cliRepository.findAll();
+	public Page<ClientDTO> findAllPaged(PageRequest pageRequest) {
+		Page<Client> list = cliRepository.findAll(pageRequest);
+		return list.map(x -> new ClientDTO(x));
 	}
-	
-	
-	
-	
+
+
 }
