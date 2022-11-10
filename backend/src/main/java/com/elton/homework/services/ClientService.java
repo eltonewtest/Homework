@@ -2,6 +2,8 @@ package com.elton.homework.services;
 
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +14,7 @@ import com.elton.homework.dto.ClientDTO;
 import com.elton.homework.entities.Client;
 import com.elton.homework.repositories.ClientRepository;
 import com.elton.homework.services.exceptions.DatabaseException;
+import com.elton.homework.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class ClientService {
@@ -44,6 +47,23 @@ public class ClientService {
 		cliRepository.save(entity);
 	
 		return new ClientDTO(entity);
+	}
+
+	@Transactional
+	public ClientDTO update(Long id, ClientDTO dto) {
+		try {
+			Client entity = cliRepository.getReferenceById(id);
+			entity.setName(dto.getName());
+			entity.setCpf(dto.getCpf());
+			entity.setBirthDate(dto.getBirthDate());
+			entity.setChildren(dto.getChildren());
+			entity.setIncome(dto.getIncome());
+			cliRepository.save(entity);
+			return new ClientDTO(entity);
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException("Id not found");
+		}
+		
 	}
 
 }
